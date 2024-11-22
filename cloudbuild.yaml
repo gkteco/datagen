@@ -1,0 +1,24 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/ce-demo-space/health-data-generator:latest', '.']
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/ce-demo-space/health-data-generator:latest']
+
+  # Deploy to GKE
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'apply'
+      - '-f'
+      - 'jobs/datagen-job.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=llm-cluster'
+
+# Images to be pushed to Container Registry
+images:
+  - 'gcr.io/ce-demo-space/health-data-generator:latest'
+
+timeout: '1800s'  # Set build timeout to 30 mins 

@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: datagen-job
+  namespace: datagen
+spec:
+  template:
+    spec:
+      serviceAccountName: datagen-ksa
+      containers:
+      - name: datagen
+        image: gcr.io/ce-demo-space/health-data-generator:latest
+        env:
+        - name: VLLM_SERVICE_URL
+          value: http://vllm-llama-3-2-1b-instruct-service.datagen.svc.cluster.local:8000/v1
+      restartPolicy: Never
